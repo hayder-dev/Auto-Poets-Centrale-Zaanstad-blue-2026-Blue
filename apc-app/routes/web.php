@@ -7,6 +7,9 @@ use App\Http\Controllers\ProjectenController;
 
 Route::view('/', 'pages.home')->name('home');
 Route::view('/over', 'pages.over')->name('over');
+// met redirect omdat de oude URL nog steeds in Google staat
+Route::redirect('/over-ons', '/over', 301);
+
 Route::view('/diensten', 'pages.diensten')->name('diensten');
 Route::view('/zakelijk', 'pages.zakelijk')->name('zakelijk');
 
@@ -39,16 +42,16 @@ Route::get('/vacatures/polijsten', fn() => view('pages.vacature-polijsten'))->na
 Route::get('/faq', fn() => view('pages.faq'))->name('faq');
 
 // route voor fotostudio
-
 Route::view('/fotostudio', 'pages.fotostudio')->name('fotostudio');
 
-
-// voor seo pages
-
-
+// SEO pages
 Route::view('/auto-laten-poetsen-zaandam', 'pages.auto-laten-poetsen-zaandam')->name('seo.zaandam');
-
 Route::view('/auto-detailing-zaandam', 'pages.auto-detailing-zaandam')->name('seo.detailing.zaandam');
+Route::view('/auto-polijsten-zaandam', 'pages.auto-polijsten-zaandam')->name('seo.polijsten.zaandam');
+Route::view('/interieur-reinigen-auto', 'pages.interieur-reinigen-auto')->name('seo.interieur');
+Route::view('/lakcorrectie-auto', 'pages.lakcorrectie-auto')->name('seo.lakcorrectie');
+Route::view('/auto-showroom-klaarmaken', 'pages.auto-showroom-klaarmaken')->name('seo.showroomklaar');
+Route::view('/koplampen-polijsten', 'pages.koplampen-polijsten')->name('seo.koplampen');
 
 Route::get('/auto-laten-poetsen-wormerveer', function () {
     return view('pages.seo-city', ['city' => 'Wormerveer']);
@@ -65,3 +68,7 @@ Route::get('/auto-laten-poetsen-assendelft', function () {
 Route::get('/auto-laten-poetsen-amsterdam', function () {
     return view('pages.seo-city', ['city' => 'Amsterdam']);
 })->name('seo.amsterdam');
+
+Route::view('/auto-laten-poetsen-haarlem', 'pages.auto-laten-poetsen-haarlem')->name('seo.haarlem');
+Route::view('/auto-laten-poetsen-alkmaar', 'pages.auto-laten-poetsen-alkmaar')->name('seo.alkmaar');
+Route::view('/auto-laten-poetsen-zwanenburg', 'pages.auto-laten-poetsen-zwanenburg')->name('seo.zwanenburg');

@@ -302,9 +302,6 @@
       if (rdwVoertuig) rdwVoertuig.value = data.voertuigsoort || '';
       if (rdwLabel) rdwLabel.value = data.label || '';
 
-      const line = `RDW: ${data.kenteken} — ${data.label}${data.voertuigsoort ? ' (' + data.voertuigsoort + ')' : ''}`;
-      upsertRdwLine(line);
-
       if (rdwStatus) rdwStatus.textContent = 'Voertuig gevonden.';
     } catch (e) {
       if (rdwStatus) rdwStatus.textContent = 'Netwerkfout. Probeer opnieuw.';

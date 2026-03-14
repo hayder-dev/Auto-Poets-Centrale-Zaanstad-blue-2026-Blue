@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Auto laten poetsen in Zaandam | Autopoetsbedrijf APCZ')
+@section('title', 'Auto laten poetsen in Zaandam | Autopoetsbedrijf Auto Poets Centrale Zaanstad')
 @section('meta_description', 'Auto laten poetsen in Zaandam? Auto Poets Centrale Zaanstad is specialist in auto detailing, interieurreiniging, showroomklaar maken en professionele autoverzorging in Zaandam en omgeving.')
 @section('meta_keywords', 'auto laten poetsen zaandam, autopoetsbedrijf zaandam, auto detailing zaandam, auto reinigen zaandam, showroomklaar maken zaandam')
 @section('canonical', url('/auto-laten-poetsen-zaandam'))
@@ -85,7 +85,7 @@
   <div class="container">
     <div class="split reveal">
       <div class="stack">
-        <span class="badge">Waarom APCZ?</span>
+        <span class="badge">Waarom Auto Poets Centrale Zaanstad?</span>
         <h2 class="h2">Rustig gewerkt. Strak opgeleverd.</h2>
         <p class="p">
           Wij geloven niet in haastwerk. Een nette auto vraagt om aandacht voor detail:
