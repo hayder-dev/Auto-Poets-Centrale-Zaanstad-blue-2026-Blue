@@ -471,13 +471,4 @@
 })();
 </script>
 
-<p>
-Wij helpen klanten uit 
-<a href="/auto-laten-poetsen-zaandam">Zaandam</a>,
-<a href="/auto-laten-poetsen-haarlem">Haarlem</a>,
-<a href="/auto-laten-poetsen-alkmaar">Alkmaar</a> en
-<a href="/auto-laten-poetsen-zwanenburg">Zwanenburg</a>
-met professionele autoverzorging.
-</p>
-
 @endsection
