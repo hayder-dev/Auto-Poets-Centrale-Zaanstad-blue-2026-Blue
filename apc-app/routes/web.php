@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RdwController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProjectenController;
+use App\Http\Controllers\AppointmentPaymentController;
 
 Route::view('/', 'pages.home')->name('home');
 Route::view('/over', 'pages.over')->name('over');
+
 // met redirect omdat de oude URL nog steeds in Google staat
 Route::redirect('/over-ons', '/over', 301);
 
@@ -31,7 +33,7 @@ Route::view('/info/wagenpark-zakelijk', 'pages.info.zakelijk')->name('info.zakel
 // RDW lookup endpoint
 Route::get('/rdw/lookup', [RdwController::class, 'lookup'])->name('rdw.lookup');
 
-// Contact submit
+// Contact / offerte / afspraak formulier
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 // Routes voor de bovenste header
@@ -72,3 +74,16 @@ Route::get('/auto-laten-poetsen-amsterdam', function () {
 Route::view('/auto-laten-poetsen-haarlem', 'pages.auto-laten-poetsen-haarlem')->name('seo.haarlem');
 Route::view('/auto-laten-poetsen-alkmaar', 'pages.auto-laten-poetsen-alkmaar')->name('seo.alkmaar');
 Route::view('/auto-laten-poetsen-zwanenburg', 'pages.auto-laten-poetsen-zwanenburg')->name('seo.zwanenburg');
+
+// toekomstige afspraak / betaling routes
+Route::get('/afspraak/bevestigd', fn() => view('pages.afspraken.bevestigd'))->name('afspraak.bevestigd');
+Route::get('/afspraak/mislukt', fn() => view('pages.afspraken.mislukt'))->name('afspraak.mislukt');
+
+Route::match(['get', 'post'], '/afspraak/{appointment}/betalen', [AppointmentPaymentController::class, 'start'])
+    ->name('mollie.start');
+
+Route::post('/mollie/webhook', [AppointmentPaymentController::class, 'handleWebhook'])
+    ->name('mollie.webhook');
+
+Route::get('/mollie/return/{appointment}', [AppointmentPaymentController::class, 'return'])
+    ->name('mollie.return');

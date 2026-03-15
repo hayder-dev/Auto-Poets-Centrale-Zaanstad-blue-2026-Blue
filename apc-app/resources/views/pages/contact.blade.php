@@ -46,6 +46,13 @@
       </div>
     @endif
 
+    @php
+      $extrasVal = old('extras', request('extras'));
+      $extrasPretty = $extrasVal ? str_replace(',', ', ', $extrasVal) : '';
+      $pakketVal = old('pakket', request('pakket'));
+      $aanvraagType = old('aanvraag_type', 'afspraak');
+    @endphp
+
     <div class="grid-3" style="margin-top:0; align-items:start;">
 
       {{-- FORMULIER --}}
@@ -63,12 +70,6 @@
               zodat we de behandeling beter kunnen inschatten en je gerichter kunnen helpen.
             </p>
           </div>
-
-          @php
-            $extrasVal = old('extras', request('extras'));
-            $extrasPretty = $extrasVal ? str_replace(',', ', ', $extrasVal) : '';
-            $pakketVal = old('pakket', request('pakket'));
-          @endphp
 
           {{-- keuze overzicht --}}
           <div class="card" style="margin-top:18px;">
@@ -92,8 +93,17 @@
             <input type="hidden" name="merk" id="rdw_merk" value="{{ old('merk', request('merk')) }}">
             <input type="hidden" name="voertuigsoort" id="rdw_voertuigsoort" value="{{ old('voertuigsoort', request('voertuigsoort')) }}">
             <input type="hidden" name="rdw_label" id="rdw_label" value="{{ old('rdw_label', request('rdw_label')) }}">
+            <input type="hidden" name="pakket" value="{{ $pakketVal }}">
 
             <div style="display:grid; gap:14px; grid-template-columns:1fr 1fr;">
+
+              <div style="grid-column:span 2;">
+                <label class="card__text"><b>Type aanvraag*</b></label>
+                <select class="input" name="aanvraag_type" id="aanvraagType" required>
+                  <option value="afspraak" {{ $aanvraagType === 'afspraak' ? 'selected' : '' }}>Ik wil direct een afspraak maken</option>
+                  <option value="offerte" {{ $aanvraagType === 'offerte' ? 'selected' : '' }}>Ik wil eerst een offerte aanvragen</option>
+                </select>
+              </div>
 
               <div>
                 <label class="card__text"><b>Naam*</b></label>
@@ -141,7 +151,59 @@
                 >
               </div>
 
-              <input type="hidden" name="pakket" value="{{ $pakketVal }}">
+              <div id="bookingFields" style="grid-column:span 2; display:none;">
+                <div class="card" style="background:#faf8f4; border:1px solid #ebe3d6;">
+                  <div class="card__body">
+                    <div class="card__title" style="margin-bottom:12px;">Afspraakgegevens</div>
+
+                    <div style="display:grid; gap:14px; grid-template-columns:1fr 1fr;">
+
+                      <div>
+                        <label class="card__text"><b>Gewenste datum*</b></label>
+                        <input class="input" type="date" name="afspraak_datum" id="afspraakDatum" value="{{ old('afspraak_datum') }}">
+                      </div>
+
+                      <div>
+                        <label class="card__text"><b>Gewenst tijdslot*</b></label>
+                        <select class="input" name="afspraak_tijd" id="afspraakTijd">
+                          <option value="">Kies een tijdslot</option>
+                          <option value="08:00" {{ old('afspraak_tijd') === '08:00' ? 'selected' : '' }}>08:00</option>
+                          <option value="08:30" {{ old('afspraak_tijd') === '08:30' ? 'selected' : '' }}>08:30</option>
+                          <option value="09:00" {{ old('afspraak_tijd') === '09:00' ? 'selected' : '' }}>09:00</option>
+                          <option value="09:30" {{ old('afspraak_tijd') === '09:30' ? 'selected' : '' }}>09:30</option>
+                        </select>
+                      </div>
+
+                      <div style="grid-column:span 2;">
+                        <label class="card__text"><b>Mate van vervuiling</b></label>
+                        <select class="input" name="vervuiling">
+                          <option value="">Selecteer</option>
+                          <option value="normaal" {{ old('vervuiling') === 'normaal' ? 'selected' : '' }}>Normaal vervuild</option>
+                          <option value="sterk_vervuild" {{ old('vervuiling') === 'sterk_vervuild' ? 'selected' : '' }}>Sterk vervuild</option>
+                          <option value="hondenhaar" {{ old('vervuiling') === 'hondenhaar' ? 'selected' : '' }}>Hondenhaar aanwezig</option>
+                          <option value="rooklucht" {{ old('vervuiling') === 'rooklucht' ? 'selected' : '' }}>Rooklucht aanwezig</option>
+                          <option value="zand_modder" {{ old('vervuiling') === 'zand_modder' ? 'selected' : '' }}>Veel zand / modder</option>
+                        </select>
+                      </div>
+
+                      <div style="grid-column:span 2;">
+                        <div class="card__text" style="opacity:.85; margin-bottom:10px;">
+                          <b>Aanbetaling:</b> €50 wordt straks gebruikt om jouw afspraak definitief te reserveren.
+                        </div>
+
+                        <label class="card__text" style="display:flex; align-items:flex-start; gap:10px;">
+                          <input type="checkbox" name="akkoord_voorwaarden" value="1" {{ old('akkoord_voorwaarden') ? 'checked' : '' }} style="margin-top:4px;">
+                          <span>
+                            Ik ga akkoord met de voorwaarden en begrijp dat pakketprijzen uitgaan van een normaal vervuilde personenauto.
+                            Bij uitzonderlijke vervuiling of extra werkzaamheden kan een meerprijs van toepassing zijn. Dit wordt altijd vooraf besproken.
+                          </span>
+                        </label>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div style="grid-column:span 2;">
                 <label class="card__text"><b>Bericht*</b></label>
@@ -157,10 +219,14 @@
             </div>
 
             <div class="action-row action-row--center" style="margin-top:18px;">
-              <button class="btn btn--primary" type="submit">Verstuur aanvraag</button>
+              <button class="btn btn--primary" type="submit" id="submitBtn">Verstuur aanvraag</button>
             </div>
 
-            <p class="card__text" style="opacity:.75; margin-top:14px; margin-bottom:0;">
+            <p class="card__text" id="bookingNotice" style="opacity:.75; margin-top:14px; margin-bottom:0; display:none;">
+              <b>Let op:</b> Na deze stap koppelen we de aanbetaling van €50 aan jouw afspraak. Daarna staat jouw reservering definitief vast.
+            </p>
+
+            <p class="card__text" id="offerteNotice" style="opacity:.75; margin-top:14px; margin-bottom:0;">
               <b>Let op:</b> Wij doen ons best om zo snel mogelijk te reageren. Door drukte kan een reactie soms iets langer duren dan gebruikelijk.
             </p>
           </form>
@@ -238,31 +304,27 @@
 <script>
 (function () {
   const kentekenInput = document.getElementById('kentekenInput');
-  const modelInput    = document.getElementById('modelInput');
-  const rdwBtn        = document.getElementById('rdwBtn');
-  const rdwStatus     = document.getElementById('rdwStatus');
+  const modelInput = document.getElementById('modelInput');
+  const rdwBtn = document.getElementById('rdwBtn');
+  const rdwStatus = document.getElementById('rdwStatus');
 
-  const rdwMerk       = document.getElementById('rdw_merk');
-  const rdwVoertuig   = document.getElementById('rdw_voertuigsoort');
-  const rdwLabel      = document.getElementById('rdw_label');
-  const berichtInput  = document.getElementById('berichtInput');
+  const rdwMerk = document.getElementById('rdw_merk');
+  const rdwVoertuig = document.getElementById('rdw_voertuigsoort');
+  const rdwLabel = document.getElementById('rdw_label');
+  const berichtInput = document.getElementById('berichtInput');
+
+  const aanvraagType = document.getElementById('aanvraagType');
+  const bookingFields = document.getElementById('bookingFields');
+  const bookingNotice = document.getElementById('bookingNotice');
+  const offerteNotice = document.getElementById('offerteNotice');
+  const submitBtn = document.getElementById('submitBtn');
+  const afspraakDatum = document.getElementById('afspraakDatum');
+  const afspraakTijd = document.getElementById('afspraakTijd');
 
   if (!kentekenInput || !modelInput || !rdwBtn) return;
 
   function cleanKenteken(v) {
     return (v || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-  }
-
-  function upsertRdwLine(line) {
-    if (!berichtInput) return;
-    const existing = berichtInput.value || '';
-
-    if (!existing.includes('RDW:')) {
-      berichtInput.value = (line + "\n\n" + existing).trim();
-      return;
-    }
-
-    berichtInput.value = existing.replace(/^RDW:.*$/m, line);
   }
 
   async function lookup() {
@@ -311,14 +373,47 @@
     }
   }
 
+  function toggleAanvraagType() {
+    const isAfspraak = aanvraagType && aanvraagType.value === 'afspraak';
+
+    if (bookingFields) {
+      bookingFields.style.display = isAfspraak ? 'block' : 'none';
+    }
+
+    if (bookingNotice) {
+      bookingNotice.style.display = isAfspraak ? 'block' : 'none';
+    }
+
+    if (offerteNotice) {
+      offerteNotice.style.display = isAfspraak ? 'none' : 'block';
+    }
+
+    if (submitBtn) {
+      submitBtn.textContent = isAfspraak ? 'Ga verder met afspraak' : 'Verstuur offerteaanvraag';
+    }
+
+    if (afspraakDatum) {
+      afspraakDatum.required = isAfspraak;
+    }
+
+    if (afspraakTijd) {
+      afspraakTijd.required = isAfspraak;
+    }
+  }
+
   rdwBtn.addEventListener('click', lookup);
 
-  kentekenInput.addEventListener('keydown', (e) => {
+  kentekenInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       e.preventDefault();
       lookup();
     }
   });
+
+  if (aanvraagType) {
+    aanvraagType.addEventListener('change', toggleAanvraagType);
+    toggleAanvraagType();
+  }
 })();
 </script>
 
